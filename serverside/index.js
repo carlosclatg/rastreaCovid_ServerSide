@@ -17,7 +17,7 @@ const { registerUser,
     updateUser, 
  } = require('./routes')
 
-mongoose.connect(DB_URL, { useNewUrlParser: true })
+mongoose.connect(DB_URL, { useNewUrlParser: true,  useFindAndModify: false  })
     .then(() => {
         tokenHelper.jwtSecret = JWT_SECRET //Initialize key for token
 

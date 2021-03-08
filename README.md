@@ -19,6 +19,7 @@ EDNPOINTS:
 
 - post('/api/user') --> Crear usuario, ver body1
 - post('/api/user/auth') --> Auth devuelve token ver body2
+- put ('/api/user/update') --> Update del usuario, ver body3
 
 - body1: ejemplo
 {
@@ -37,5 +38,15 @@ EDNPOINTS:
     "password": "250894"
 }
 
+-body3: ejemplo
+{
+    "name": "Carlos",
+    "surname": "Calvo",
+    "email": "carloscl19863456@gmail.com",
+    "password": "kk",
+    "passwordConfirm":"kk",
+    "type": "rastreator"
+}
 
 
+Missing affinar los codigos http de respuesta para cada error.
