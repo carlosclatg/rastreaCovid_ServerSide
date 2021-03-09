@@ -1,6 +1,6 @@
 'use strict'
 
-const { User} = require('../data/index')
+const { User } = require('../data/index')
 const bcrypt = require('bcrypt');
 const ObjectID = require('mongodb').ObjectID
 const { AuthError, EmptyError, DuplicateError, MatchingError, NotFoundError } = require('../errors')
@@ -24,34 +24,24 @@ const logic = {
     */
 
     //Tested 28-02 with Postman
-    registerUser(name, surname, email, password, passwordConfirmation, type) {
+    registerUser(name, surname, email, password, passwordConfirmation, type, phone) {
         if (typeof name !== 'string') throw new TypeError(name + ' is not a string')
-
         if (!name.trim().length) throw new EmptyError('name cannot be empty')
-
         if (typeof surname !== 'string') throw new TypeError(surname + ' is not a string')
-
         if (!surname.trim().length) throw new EmptyError('surname cannot be empty')
-
         if (typeof email !== 'string') throw new TypeError(email + ' is not a string')
-
         if (!email.trim().length) throw new EmptyError('email cannot be empty')
-
         if (typeof password !== 'string') throw new TypeError(password + ' is not a string')
-
         if (!password.trim().length) throw new EmptyError('password cannot be empty')
-
         if (typeof passwordConfirmation !== 'string') throw new TypeError(passwordConfirmation + ' is not a string')
-
         if (!passwordConfirmation.trim().length) throw new EmptyError('password confirmation cannot be empty')
-
         if (password !== passwordConfirmation) throw new MatchingError('passwords do not match')
-
         if (typeof type !== 'string') throw new TypeError(type + ' is not a string')
-
         if (!type.trim().length) throw new EmptyError('type cannot be empty')
-
+        if (typeof phone !== 'number') throw new TypeError(phone + ' is not a number')
         if (type !== this.ADMIN && type !== this.RASTREATOR) throw new TypeError(type + ' is not a valid type')
+
+
 
         return (async () => {
             const user = await User.findOne({ email })
@@ -60,7 +50,7 @@ const logic = {
 
             const hash = await bcrypt.hash(password, 10)
 
-            const { id } = await User.create({ name, surname, email, type , password: hash })
+            const { id } = await User.create({ name, surname, email, type , password: hash , phone})
 
             return id
         })()
@@ -102,13 +92,9 @@ const logic = {
 
         if (!userId.trim().length) throw new EmptyError('user id is empty')
 
-        return User.findById(userId).select('-password -__v').lean()
+        return User.findById(userId).select({"name": 1, "_id": 0, "surname": 1, "email": 1, "phone": 1})
             .then(user => {
                 if (!user) throw new NotFoundError(`user with id ${userId} not found`)
-
-                user.id = user._id.toString()
-                delete user._id
-
                 return user
             })
     },
@@ -123,7 +109,7 @@ const logic = {
      * @param {String} passwordConfirmation 
      */
 
-    updateUser(name, surname, email, password, passwordConfirmation, type){
+    updateUser(name, surname, email, password, passwordConfirmation, type, phone){
         if (typeof name !== 'string') throw new TypeError(name + ' is not a string')
         if (!name.trim().length) throw new EmptyError('name cannot be empty')
         if (typeof surname !== 'string') throw new TypeError(surname + ' is not a string')
@@ -137,11 +123,12 @@ const logic = {
         if (password !== passwordConfirmation) throw new MatchingError('passwords do not match')
         if (typeof type !== 'string') throw new TypeError(type + ' is not a string')
         if (!type.trim().length) throw new EmptyError('type cannot be empty')
+        if (typeof phone !== 'number') throw new TypeError(phone + ' is not a number')
         if (type !== this.ADMIN && type !== this.RASTREATOR) throw new TypeError(type + ' is not a valid type')
 
         return (async () => {
             const hash = await bcrypt.hash(password, 10)
-            const user = await User.findOneAndUpdate({email}, {$set:{name, surname, 'password': hash}, type}, {new : true})
+            const user = await User.findOneAndUpdate({email}, {$set:{name, surname, 'password': hash}, type, phone}, {new : true})
             if(!user) throw new NotFoundError('To update, first create a user')
             return user. _id
         })()

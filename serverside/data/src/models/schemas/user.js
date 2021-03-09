@@ -31,6 +31,11 @@ const User = new Schema({
     type: {
         type: String,
         required: true
+    },
+
+    phone :  {
+        type: Number,
+        required: true
     }
 })
 

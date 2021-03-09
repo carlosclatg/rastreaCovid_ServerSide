@@ -1,17 +1,19 @@
 const logic = require('../logic')
 
 module.exports = (req, res) => {
-    const { body: { name, surname, email, password, passwordConfirm, type, phone } } = req
+    const { userId } = req
+
     try {
-        logic.updateUser(name, surname, email, password, passwordConfirm, type, phone)
-            .then(id => res.json({ id }))
+        logic.retrieveUser(userId)
+            // .then(user => res.json(user))
+            .then(res.json.bind(res))
             .catch(({ message }) => {
                 res.status(400).json({
                     error: message
                 })
             })
     } catch ({ message }) {
-        res.status(409).json({
+        res.status(400).json({
             error: message
         })
     }

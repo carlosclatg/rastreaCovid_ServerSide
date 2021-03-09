@@ -6,4 +6,6 @@ module.exports = {
 
     updateUser : require('./update-user'),
 
+    retrieveUser : require('./retrieve-user')
+
 }

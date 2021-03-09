@@ -5,11 +5,11 @@ const jwt = require('jsonwebtoken')
 const tokenHelper = {
     jwtSecret: null,
 
-    createToken(userId) {
+    createToken (userId)  {
         return jwt.sign({ sub: userId }, this.jwtSecret, { expiresIn: '4h' })
     },
 
-    verifyToken(token) {
+    verifyToken (token)  {
         const { sub } = jwt.verify(token, this.jwtSecret)
 
         if (!sub) throw Error(`subject not present in token ${token}`)
@@ -17,14 +17,14 @@ const tokenHelper = {
         return sub
     },
 
-    tokenVerifierMiddleware(req, res, next) {
+    tokenVerifierMiddleware  (req, res, next)  { //Attach userId to req
         const { headers: { authorization } } = req
 
-        const token = authorization.substring(7)
+        const token = authorization.substring(7) //Bearer |-> taken token from here
 
         try {
             const userId = this.verifyToken(token)
-
+            //añadir logs
             req.userId = userId
         } catch ({ message }) {
             return res.status(401).json({ error: message })
@@ -36,6 +36,7 @@ const tokenHelper = {
 
 const { createToken, verifyToken, tokenVerifierMiddleware } = tokenHelper
 
+// Crear una nueva función con 'this' asociado al objeto original tokenhelper para poder acceder al jwt
 tokenHelper.createToken = createToken.bind(tokenHelper)
 tokenHelper.verifyToken = verifyToken.bind(tokenHelper)
 tokenHelper.tokenVerifierMiddleware = tokenVerifierMiddleware.bind(tokenHelper)
