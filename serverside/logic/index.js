@@ -4,7 +4,7 @@ const { User } = require('../data/index')
 const bcrypt = require('bcrypt');
 const ObjectID = require('mongodb').ObjectID
 const { AuthError, EmptyError, DuplicateError, MatchingError, NotFoundError } = require('../errors')
-
+const passwordValidator = require('password-validator');
 /**
  * Abstraction of business logic.
  */
@@ -41,6 +41,16 @@ const logic = {
         if (typeof phone !== 'number') throw new TypeError(phone + ' is not a number')
         if (type !== this.ADMIN && type !== this.RASTREATOR) throw new TypeError(type + ' is not a valid type')
 
+
+        let schema1 = new passwordValidator();
+
+        schema1
+            .min(8)                                    // Minimum length 8
+            .has().uppercase()                              // Must have uppercase letters
+            .has().lowercase()                              // Must have lowercase letters
+            .has().digits(1)  
+        //check password security:
+        if(!schema1.validate(password)) throw new TypeError(password + ' does not meet minimum security requirements. Min 8. Uppercase and lowercase and 1 number')  
 
 
         return (async () => {
