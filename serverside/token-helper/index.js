@@ -20,14 +20,15 @@ const tokenHelper = {
     tokenVerifierMiddleware  (req, res, next)  { //Attach userId to req
         const { headers: { authorization } } = req
 
-        const token = authorization.substring(7) //Bearer |-> taken token from here
-
         try {
+
+            const token = authorization.substring(7) //Bearer |-> taken token from here
+
             const userId = this.verifyToken(token)
             //añadir logs
             req.userId = userId
         } catch ({ message }) {
-            return res.status(401).json({ error: message })
+            return res.status(400).json({ error: message })
         }
 
         next()
