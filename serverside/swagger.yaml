@@ -9,6 +9,8 @@ info:
       This is the general API interface for RastreaCovid
 
       All timestamp field **are** UTC based !
+
+      The DB has the following fields
       
       |Field|Data Type|Description
       |---|---|---|
@@ -45,14 +47,14 @@ paths:
         description: Here you can add all the attributes to register the user
         required: true
         content:
-          application/geo+json:
+          application/json:
             schema:
               $ref: '#/components/schemas/RegisterUser'
       responses:
         '200':
           description: internal id registered
           content:
-            application/geo+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/UriRef'
         '400':
