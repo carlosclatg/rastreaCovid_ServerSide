@@ -1,0 +1,118 @@
+openapi: 3.0.0
+info:
+  version: 1.0.1
+  title: GIS Hub (write)
+  x-summary: This API performs CRUD operations
+  description: >
+    API CRUD on objects. 
+
+      This is the general API interface for RastreaCovid
+
+      All timestamp field **are** UTC based !
+      
+      |Field|Data Type|Description
+      |---|---|---|
+      |---|---|---|
+      |_id|String|The code of the domain.
+      |name|String|name
+      |surname|String|surname
+      |email|String|The mail for the user. UNIQUE
+      |type|String|The role of the user. Values accepted are rastreator and admin.
+      |password|String|Hash of the password for the given user.
+      |phone|Number|Phone number of the user. UNIQUE
+      
+
+servers:
+  - description: Nodejs
+    url: >-
+      localhost:8080
+
+tags:
+  - name: Features
+    description: CUD of GIS features inside a space
+
+paths:
+  '/user':
+    post:
+      x-auth-type: Application User
+      summary: Register one new user.
+      description: |
+         Use this resource to register a new user.
+      operationId: postFeature
+      tags:
+        - Features
+      requestBody:
+        description: Here you can add all the attributes to register the user
+        required: true
+        content:
+          application/geo+json:
+            schema:
+              $ref: '#/components/schemas/RegisterUser'
+      responses:
+        '200':
+          description: internal id registered
+          content:
+            application/geo+json:
+              schema:
+                $ref: '#/components/schemas/UriRef'
+        '400':
+          description: If any of the elements is not present, null or empty string. If a email or phone is already registered.
+components:
+  schemas:
+    UriRef:
+      type: object
+      description: Reference to the object
+      required: 
+        - _id
+      properties:
+        unique_id:
+          type: string
+          format: uri
+      example:
+        _id: "507f1f77bcf86cd799439011"
+    RegisterUser:
+      type: object
+      description: User to be added
+      required:
+        - name
+        - surname
+        - password
+        - passwordConfirm
+        - email
+        - type
+        - phone
+      properties:
+        name:
+          type: string
+          description: name
+        surname:
+          type: string
+          description: surname
+        password:
+          type: string
+          description: Password, must have a minimum requirements.
+        passwordConfirm:
+          type: string
+          description: Password, must have a minimum requirements. Intended for password confirmation check.
+        email:
+          type: string
+          description: email of the user. Unique in DB.
+        type:
+          type: string
+          description: type of user. Values accepted are rastreator and admin.
+        phone:
+          type: number
+          description: Phone number of the user. Unique in DB.
+      example:
+        name: "IOC User"
+        surname: "IOC surname"
+        password: "UserIOC1234!"
+        passwordConfirm: "UserIOC1234!"
+        email: "opc@ioc.com"
+        type: "rastreator"
+        phone: "123456909"
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

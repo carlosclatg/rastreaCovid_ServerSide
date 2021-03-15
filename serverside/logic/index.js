@@ -2,7 +2,6 @@
 
 const { User } = require('../data/index')
 const bcrypt = require('bcrypt');
-const ObjectID = require('mongodb').ObjectID
 const { AuthError, EmptyError, DuplicateError, MatchingError, NotFoundError } = require('../errors')
 const passwordValidator = require('password-validator');
 /**
@@ -38,7 +37,7 @@ const logic = {
         if (password !== passwordConfirmation) throw new MatchingError('passwords do not match')
         if (typeof type !== 'string') throw new TypeError(type + ' is not a string')
         if (!type.trim().length) throw new EmptyError('type cannot be empty')
-        if (typeof phone !== 'number') throw new TypeError(phone + ' is not a number')
+        if (typeof phone !== 'number') throw new TypeError('phone is not a number')
         if (type !== this.ADMIN && type !== this.RASTREATOR) throw new TypeError(type + ' is not a valid type')
 
 
@@ -133,7 +132,7 @@ const logic = {
         if (password !== passwordConfirmation) throw new MatchingError('passwords do not match')
         if (typeof type !== 'string') throw new TypeError(type + ' is not a string')
         if (!type.trim().length) throw new EmptyError('type cannot be empty')
-        if (typeof phone !== 'number') throw new TypeError(phone + ' is not a number')
+        if (typeof phone !== 'number') throw new TypeError('phone is not a number')
         if (type !== this.ADMIN && type !== this.RASTREATOR) throw new TypeError(type + ' is not a valid type')
 
         return (async () => {

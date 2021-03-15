@@ -11,7 +11,7 @@ module.exports = (req, res) => {
                 })
             })
     } catch ({ message }) {
-        res.status(409).json({
+        res.status(400).json({
             error: message
         })
     }
