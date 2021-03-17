@@ -8,6 +8,9 @@ const tokenHelper = require('./token-helper')
 const { tokenVerifierMiddleware } = tokenHelper
 const authMiddleware = require('./authorizationmd')
 const cors = require('cors')
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('yamljs');
+const swaggerDocument = YAML.load('./swagger.yaml');
 
 const DB_URL = "mongodb+srv://carlos:250894@cluster0.v8se2.mongodb.net/ioc?retryWrites=true&w=majority"
 const JWT_SECRET = "MYSECRET"
@@ -31,7 +34,8 @@ mongoose.connect(DB_URL, { useNewUrlParser: true,  useFindAndModify: false  })
         app.use('/api', router)
         router.use(cors()) //Para el Cors, evita el bloqueo del navegador por seguridad cuando hace llamadas a diferentes URLs.
         //Faltará implementar middlewares de authorization que puede requerir llamar a BD.
-        
+        router.use('/api-docs', swaggerUi.serve);
+        router.get('/api-docs', swaggerUi.setup(swaggerDocument));
         router.post('/user', jsonBodyParser, registerUser)
         router.post('/user/auth', jsonBodyParser, authenticateUser)
         router.put('/user/update', jsonBodyParser, updateUser)

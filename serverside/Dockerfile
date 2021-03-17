@@ -16,4 +16,4 @@ RUN npm install
 COPY . .
 
 EXPOSE 8080
-CMD [ "forever", "index.js" ]
+CMD [ "node", "index.js" ]

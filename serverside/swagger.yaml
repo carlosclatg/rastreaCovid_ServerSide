@@ -31,7 +31,6 @@ servers:
 
 tags:
   - name: Features
-    description: CUD of GIS features inside a space
 
 paths:
   '/user':
