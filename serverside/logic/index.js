@@ -24,21 +24,21 @@ const logic = {
 
     //Tested 28-02 with Postman
     registerUser(name, surname, email, password, passwordConfirmation, type, phone) {
-        if (typeof name !== 'string') throw new TypeError(name + ' is not a string')
+        if (typeof name !== 'string') throw new TypeError('name  is not a string')
         if (!name.trim().length) throw new EmptyError('name cannot be empty')
-        if (typeof surname !== 'string') throw new TypeError(surname + ' is not a string')
+        if (typeof surname !== 'string') throw new TypeError('surname is not a string')
         if (!surname.trim().length) throw new EmptyError('surname cannot be empty')
-        if (typeof email !== 'string') throw new TypeError(email + ' is not a string')
+        if (typeof email !== 'string') throw new TypeError('email is not a string')
         if (!email.trim().length) throw new EmptyError('email cannot be empty')
-        if (typeof password !== 'string') throw new TypeError(password + ' is not a string')
+        if (typeof password !== 'string') throw new TypeError('password  is not a string')
         if (!password.trim().length) throw new EmptyError('password cannot be empty')
-        if (typeof passwordConfirmation !== 'string') throw new TypeError(passwordConfirmation + ' is not a string')
+        if (typeof passwordConfirmation !== 'string') throw new TypeError('passwordConfirmation is not a string')
         if (!passwordConfirmation.trim().length) throw new EmptyError('password confirmation cannot be empty')
         if (password !== passwordConfirmation) throw new MatchingError('passwords do not match')
-        if (typeof type !== 'string') throw new TypeError(type + ' is not a string')
+        if (typeof type !== 'string') throw new TypeError('type is not a string')
         if (!type.trim().length) throw new EmptyError('type cannot be empty')
         if (typeof phone !== 'number') throw new TypeError('phone is not a number')
-        if (type !== this.ADMIN && type !== this.RASTREATOR) throw new TypeError(type + ' is not a valid type')
+        if (type !== this.ADMIN && type !== this.RASTREATOR) throw new TypeError('type is not a valid type')
 
 
         let schema1 = new passwordValidator();
@@ -74,16 +74,19 @@ const logic = {
 
     //TESTED MANUALLY 28-02 POSTMAN
     authenticateUser(email, password) {
-        if (typeof email !== 'string') throw new TypeError(email + ' is not a string')
+        console.log(email)
+        console.log(password)
+        if (typeof email !== 'string') throw new TypeError('email is not a string')
 
         if (!email.trim().length) throw new EmptyError('email cannot be empty')
 
-        if (typeof password !== 'string') throw new TypeError(password + ' is not a string')
+        if (typeof password !== 'string') throw new TypeError(' password is not a string')
 
         if (!password.trim().length) throw new EmptyError('password cannot be empty')
 
         return (async () => {
-                const user = await User.findOne({ email })          
+                const user = await User.findOne({ email }) 
+                if(!user) throw new EmptyError('User not exists')        
                 const match = await bcrypt.compare(password, user.password)
                 if (!match) throw new AuthError('wrong credentials')
                 
@@ -97,7 +100,7 @@ const logic = {
      * @param {String} userId 
      */
     retrieveUser(userId) {
-        if (typeof userId !== 'string') throw new TypeError(`${userId} is not a string`)
+        if (typeof userId !== 'string') throw new TypeError(`userId is not a valid String`)
 
         if (!userId.trim().length) throw new EmptyError('user id is empty')
 
@@ -119,21 +122,21 @@ const logic = {
      */
 
     updateUser(name, surname, email, password, passwordConfirmation, type, phone){
-        if (typeof name !== 'string') throw new TypeError(name + ' is not a string')
+        if (typeof name !== 'string') throw new TypeError('name  is not a string')
         if (!name.trim().length) throw new EmptyError('name cannot be empty')
-        if (typeof surname !== 'string') throw new TypeError(surname + ' is not a string')
+        if (typeof surname !== 'string') throw new TypeError('surname is not a string')
         if (!surname.trim().length) throw new EmptyError('surname cannot be empty')
-        if (typeof email !== 'string') throw new TypeError(email + ' is not a string')
+        if (typeof email !== 'string') throw new TypeError('email is not a string')
         if (!email.trim().length) throw new EmptyError('email cannot be empty')
-        if (typeof password !== 'string') throw new TypeError(password + ' is not a string')
+        if (typeof password !== 'string') throw new TypeError('password  is not a string')
         if (!password.trim().length) throw new EmptyError('password cannot be empty')
-        if (typeof passwordConfirmation !== 'string') throw new TypeError(passwordConfirmation + ' is not a string')
+        if (typeof passwordConfirmation !== 'string') throw new TypeError('passwordConfirmation is not a string')
         if (!passwordConfirmation.trim().length) throw new EmptyError('password confirmation cannot be empty')
         if (password !== passwordConfirmation) throw new MatchingError('passwords do not match')
-        if (typeof type !== 'string') throw new TypeError(type + ' is not a string')
+        if (typeof type !== 'string') throw new TypeError('type is not a string')
         if (!type.trim().length) throw new EmptyError('type cannot be empty')
         if (typeof phone !== 'number') throw new TypeError('phone is not a number')
-        if (type !== this.ADMIN && type !== this.RASTREATOR) throw new TypeError(type + ' is not a valid type')
+        if (type !== this.ADMIN && type !== this.RASTREATOR) throw new TypeError('type is not a valid type')
 
         return (async () => {
             const hash = await bcrypt.hash(password, 10)

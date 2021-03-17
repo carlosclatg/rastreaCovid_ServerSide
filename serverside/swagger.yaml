@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   version: 1.0.1
-  title: GIS Hub (write)
+  title: RastreaCovid
   x-summary: This API performs CRUD operations
   description: >
     API CRUD on objects. 
@@ -27,7 +27,7 @@ info:
 servers:
   - description: Nodejs
     url: >-
-      localhost:8080
+      localhost:8080/api
 
 tags:
   - name: Features
@@ -59,6 +59,76 @@ paths:
                 $ref: '#/components/schemas/UriRef'
         '400':
           description: If any of the elements is not present, null or empty string. If a email or phone is already registered.
+  '/user/auth':
+    post:
+      x-auth-type: Application User
+      summary: Register one new user.
+      description: |
+         Use this resource to authenticate
+      operationId: Auth
+      tags:
+        - Features
+      requestBody:
+        description: Authentication by email and password
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthUser'
+      responses:
+        '200':
+          description: internal id registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        '400':
+          description: If any of the elements is not present, null or empty string.
+  '/user/update':
+    put:
+      x-auth-type: Application User
+      summary: Updates user attributes by email
+      description: |
+         Use this resource to update a user
+      operationId: putFeature
+      tags:
+        - Features
+      requestBody:
+        description: Updates user attributes by email
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUser'
+      responses:
+        '200':
+          description: internal id registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UriRef'
+        '400':
+          description: If any of the elements is not present, null or empty string.
+  '/retrieve-user':
+    get:
+      x-auth-type: Application User
+      summary: Retrieve data from a user
+      description: |
+         Use this resource to retrieve data from a user
+      operationId: Retrieve Feature
+      security:
+        - bearerAuth: []
+      tags:
+        - Features
+      responses:
+        '200':
+          description: User attributes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RetrieveUser'
+        '400':
+          description: If auth by token fails
 components:
   schemas:
     UriRef:
@@ -69,9 +139,19 @@ components:
       properties:
         unique_id:
           type: string
-          format: uri
       example:
         _id: "507f1f77bcf86cd799439011"
+    Token:
+      type: object
+      description: Token, expires in 4h.
+      required: 
+        - _id
+      properties:
+        token:
+          type: string
+          format: uri
+      example:
+        token: "Your_auth_token"
     RegisterUser:
       type: object
       description: User to be added
@@ -113,8 +193,46 @@ components:
         email: "opc@ioc.com"
         type: "rastreator"
         phone: "123456909"
+    AuthUser:
+      type: object
+      description: User to be authenticated
+      required:
+        - password
+        - email
+      properties:
+        password:
+          type: string
+          description: Password, must have a minimum requirements.
+        email:
+          type: string
+          description: email of the user. Unique in DB.
+      example:
+        password: "UserIOC1234!"
+        email: "opc@ioc.com"
+    RetrieveUser:
+      type: object
+      description: Retrieved info from user
+      required:
+        - name
+        - surname
+        - email
+        - phone
+      properties:
+        name:
+          type: string
+        surname:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+      example:
+        name: "IOC User"
+        surname: "IOC surname"
+        email: "opc@ioc.com"
+        phone: "123456909"
   securitySchemes:
-    BearerAuth:
+    bearerAuth:            
       type: http
       scheme: bearer
-      bearerFormat: JWT
+      bearerFormat: JWT 
