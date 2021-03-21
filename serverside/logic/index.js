@@ -71,11 +71,7 @@ const logic = {
      * @param {string} email 
      * @param {string} password 
      */
-
-    //TESTED MANUALLY 28-02 POSTMAN
     authenticateUser(email, password) {
-        console.log(email)
-        console.log(password)
         if (typeof email !== 'string') throw new TypeError('email is not a string')
 
         if (!email.trim().length) throw new EmptyError('email cannot be empty')
@@ -138,10 +134,21 @@ const logic = {
         if (typeof phone !== 'number') throw new TypeError('phone is not a number')
         if (type !== this.ADMIN && type !== this.RASTREATOR) throw new TypeError('type is not a valid type')
 
+
+        let schema1 = new passwordValidator();
+
+        schema1
+            .min(8)                                    // Minimum length 8
+            .has().uppercase()                              // Must have uppercase letters
+            .has().lowercase()                              // Must have lowercase letters
+            .has().digits(1)  
+        //check password security:
+        if(!schema1.validate(password)) throw new TypeError(password + ' does not meet minimum security requirements. Min 8. Uppercase and lowercase and 1 number')  
+
         return (async () => {
             const hash = await bcrypt.hash(password, 10)
             const user = await User.findOneAndUpdate({email}, {$set:{name, surname, 'password': hash}, type, phone}, {new : true})
-            if(!user) throw new NotFoundError('To update, first create a user')
+            if(!user) throw new NotFoundError('To update, first create a user. The email was not found')
             return user. _id
         })()
     }
