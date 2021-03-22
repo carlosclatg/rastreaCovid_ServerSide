@@ -17,3 +17,6 @@ If you run it as it is:
 
 http://localhost:8080/api/api-docs/
 
+To run test:
+
+$ npm test
