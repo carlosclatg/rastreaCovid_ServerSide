@@ -108,7 +108,7 @@ paths:
                 $ref: '#/components/schemas/UriRef'
         '400':
           description: If any of the elements is not present, null or empty string.
-  '/retrieve-user':
+  '/retrieveuser':
     get:
       x-auth-type: Application User
       summary: Retrieve data from a user
