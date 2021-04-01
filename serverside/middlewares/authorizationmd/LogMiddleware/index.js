@@ -1,4 +1,4 @@
-const { Logs } = require("../data")
+const { Logs } = require("../../../data")
 
 module.exports = (req, res, next)  => {
     userId = req.userId

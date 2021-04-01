@@ -1,7 +1,7 @@
 'use strict'
 
 module.exports = {
-    AuthError: require('./not-found-error'),
+    AuthError: require('./auth-error'),
     DataError: require('./data-error'),
     DuplicateError: require('./duplicate-error'),
     EmptyError: require('./empty-error'),
