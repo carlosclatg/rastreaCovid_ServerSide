@@ -23,6 +23,9 @@ const { registerUser,
     retrieveUser
  } = require('./routes')
 
+ const getContacts = 'getContacts'
+ const getPacients = 'getPacients'
+
 mongoose.connect(DB_URL, { useNewUrlParser: true,  useFindAndModify: false  })
     .then(() => {
         tokenHelper.jwtSecret = JWT_SECRET //Initialize key for token
@@ -40,9 +43,9 @@ mongoose.connect(DB_URL, { useNewUrlParser: true,  useFindAndModify: false  })
         router.post('/user', jsonBodyParser, registerUser)
         router.post('/user/auth', jsonBodyParser, authenticateUser)
         router.put('/user/update', jsonBodyParser, updateUser)
-        router.get('/retrieveuser', [tokenVerifierMiddleware, logsMiddleware], retrieveUser)
-        router.get('/pacients', [tokenVerifierMiddleware, logsMiddleware, verifyAuth('getPacients')], retrieveUser)
-        router.get('/contacts', [tokenVerifierMiddleware, logsMiddleware, verifyAuth('getContacts')], retrieveUser)
+        router.get('/retrieveuser', [tokenVerifierMiddleware], retrieveUser)
+        router.get('/pacients', [tokenVerifierMiddleware, logsMiddleware(getContacts), verifyAuth(getContacts)], retrieveUser)
+        router.get('/contacts', [tokenVerifierMiddleware, logsMiddleware(getPacients), verifyAuth(getPacients)], retrieveUser)
         app.listen(PORT, () => console.log(`running on port ${PORT}`))
     })
     .catch(console.error)
