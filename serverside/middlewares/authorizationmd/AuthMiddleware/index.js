@@ -1,5 +1,5 @@
 const { User, Permissions } = require("../../../data")
-const {AuthError} = require('../../../errors/index')
+const {AuthError, EmptyError} = require('../../../errors/index')
 
 module.exports = function verifyAuth(operation) {
     return async (req, res, next) => {
