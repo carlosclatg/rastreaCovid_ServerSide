@@ -29,12 +29,10 @@ const Pacient = new Schema({
 
     contacts: {
         type: Array,
-        required: true
     },
 
     sintoms: {
         type: Array,
-        required: true
     },
 
     createdBy: {

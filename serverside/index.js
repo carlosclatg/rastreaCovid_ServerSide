@@ -20,11 +20,13 @@ const PORT = 8080
 const { registerUser, 
     authenticateUser, 
     updateUser, 
-    retrieveUser
+    retrieveUser,
+    addPacient
  } = require('./routes')
 
  const getContacts = 'getContacts'
  const getPacients = 'getPacients'
+ const createPacient = 'createPacient'
 
 mongoose.connect(DB_URL, { useNewUrlParser: true,  useFindAndModify: false  })
     .then(() => {
@@ -46,6 +48,7 @@ mongoose.connect(DB_URL, { useNewUrlParser: true,  useFindAndModify: false  })
         router.get('/retrieveuser', [tokenVerifierMiddleware], retrieveUser)
         router.get('/pacients', [tokenVerifierMiddleware, logsMiddleware(getContacts), verifyAuth(getContacts)], retrieveUser)
         router.get('/contacts', [tokenVerifierMiddleware, logsMiddleware(getPacients), verifyAuth(getPacients)], retrieveUser)
+        router.post('/pacient', [tokenVerifierMiddleware, logsMiddleware(createPacient), verifyAuth(createPacient)], addPacient)
         app.listen(PORT, () => console.log(`running on port ${PORT}`))
     })
     .catch(console.error)

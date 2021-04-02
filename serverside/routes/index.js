@@ -6,6 +6,8 @@ module.exports = {
 
     updateUser : require('./update-user'),
 
-    retrieveUser : require('./retrieve-user')
+    retrieveUser : require('./retrieve-user'),
+
+    addPacient: require('./add-pacient')
 
 }

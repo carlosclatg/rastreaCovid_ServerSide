@@ -1,9 +1,10 @@
 'use strict'
 
-const { User } = require('../data/index')
+const { User, Pacient, Contact } = require('../data/index')
 const bcrypt = require('bcrypt');
 const { AuthError, EmptyError, DuplicateError, MatchingError, NotFoundError } = require('../errors')
 const passwordValidator = require('password-validator');
+const mongoose = require('mongoose')
 /**
  * Abstraction of business logic.
  */
@@ -151,8 +152,61 @@ const logic = {
             if(!user) throw new NotFoundError('To update, first create a user. The email was not found')
             return user. _id
         })()
-    }
+    },
+
+    registerPacient(name, surname, phone, bdate, PcrDate, arrayOfContacts, sintoms, userId){
+        if (typeof name !== 'string') throw new TypeError('name  is not a string')
+        if (!name.trim().length) throw new EmptyError('name cannot be empty')
+        if (typeof surname !== 'string') throw new TypeError('surname is not a string')
+        if (!surname.trim().length) throw new EmptyError('surname cannot be empty')
+        if (typeof phone !== 'number') throw new TypeError('phone is not a number')
+        if (typeof bdate !== 'number') throw new TypeError('birthdate is not a valid number')
+        if (typeof PcrDate !== 'number') throw new TypeError('birthdate is not a valid number')
+        if (typeof userId !== 'string') throw new TypeError('userId is not a string')
+        if (!userId.trim().length) throw new EmptyError('userId cannot be empty')
+        if (!(arrayOfContacts instanceof Array)) throw new TypeError('contacts is not an array')
+        if (!(sintoms instanceof Array)) throw new TypeError('sintoms is not an array')
+            
     
+        return (async () => {
+            const session = await mongoose.startSession()
+                //check no other pacient with this phone
+            try{
+                session.startTransaction()
+                const p = await Pacient.findOne({phone});
+                if(p){
+                    console.log(p)
+                    throw new Error('Existing phone')
+                } 
+                //create pacient
+                const birthdate = new Date(bdate)
+                const PCRDate = new Date(PcrDate)
+
+                const contacts = arrayOfContacts.map(x => x.phone)
+                const pacient = await Pacient.create([{ name, surname, phone, birthdate, PCRDate, sintoms, 'createdBy': userId, contacts }], {session: session})
+                if(!pacient) {
+                    await session.abortTransaction()
+                    session.endSession()
+                    throw new Error('No pacient was saved')
+                }
+                if(contacts && contacts.length) {
+                    const contacts = await Contact.insertMany(contacts, {session: session})
+                }
+                
+                await session.commitTransaction()
+                session.endSession()
+                
+                return pacient[0]._id
+                
+            } catch(err){
+                await session.abortTransaction()
+                session.endSession()
+                return Promise.reject(err)
+            }
+            
+           
+        })();
+    }
 }
 
 module.exports = logic
