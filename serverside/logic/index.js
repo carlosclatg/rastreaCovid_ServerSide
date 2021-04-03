@@ -167,7 +167,7 @@ const logic = {
         if (!(arrayOfContacts instanceof Array)) throw new TypeError('contacts is not an array')
         if (!(sintoms instanceof Array)) throw new TypeError('sintoms is not an array')
             
-    
+
         return (async () => {
             const session = await mongoose.startSession()
                 //check no other pacient with this phone
@@ -181,16 +181,18 @@ const logic = {
                 //create pacient
                 const birthdate = new Date(bdate)
                 const PCRDate = new Date(PcrDate)
-                if(!lang) lang = 'cat'
+
                 const contacts = arrayOfContacts.map(x => x.phone)
-                const pacient = await Pacient.create([{ name, surname, phone, birthdate, PCRDate, sintoms, 'createdBy': userId, contacts }], {session: session})
+                let sintomsObjectId = sintoms.map(x=> new mongoose.mongo.ObjectId(x))
+                const pacient = await Pacient.create([{ name, surname, phone, birthdate, PCRDate, 'sintoms' : sintomsObjectId, 'createdBy': new mongoose.mongo.ObjectId(userId), contacts }], {session: session})
                 if(!pacient) {
                     await session.abortTransaction()
                     session.endSession()
                     throw new Error('No pacient was saved')
                 }
-                if(contacts && contacts.length) {
-                    const contacts = await Contact.insertMany(contacts, {session: session})
+                if(arrayOfContacts && arrayOfContacts.length) {
+                    console.log(arrayOfContacts)
+                    const a = await Contact.insertMany(arrayOfContacts, {session: session})
                 }
                 
                 await session.commitTransaction()
@@ -228,10 +230,17 @@ const logic = {
                 
             let sintoms = await Sintoms.find({},options)
             return sintoms
-            
         })()
     },
 }
 
 module.exports = logic
 
+/**
+ * {
+  from: 'sintoms',
+  localField: 'sintoms',
+  foreignField: '_id',
+  as: 'arrayofsintom'
+}
+ */

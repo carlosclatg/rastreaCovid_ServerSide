@@ -15,12 +15,12 @@ const Contact = new Schema({
         type: Number,
         required: true,
         unique: true
-    },
-
-    pacientId: {
-        type: String,
-        required: true
     }
+
+    // pacientId: {
+    //     type: String,
+    //     required: true
+    // }
 
 })
 

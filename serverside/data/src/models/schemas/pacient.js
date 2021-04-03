@@ -1,4 +1,5 @@
-const { Schema } = require('mongoose')
+const { Schema, ObjectId } = require('mongoose')
+
 
 const Pacient = new Schema({
     name: {
@@ -28,18 +29,20 @@ const Pacient = new Schema({
     },
 
     contacts: {
-        type: Array,
+        type: [Number]
     },
 
     sintoms: {
-        type: Array,
+        type: [ObjectId]
     },
 
     createdBy: {
-        type: String,
+        type: ObjectId,
         required: true
     }
 
 })
+
+
 
 module.exports = Pacient
