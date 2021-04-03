@@ -5,7 +5,7 @@ module.exports = function logsMiddleware(operation) {
         userId = req.userId
         try{
             Logs.create({userId, operation})
-                .then(res=> res)
+                .then(x=> x)
                 .catch(({ message }) => {
                     console.log(message)
                 })

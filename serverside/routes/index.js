@@ -8,6 +8,8 @@ module.exports = {
 
     retrieveUser : require('./retrieve-user'),
 
-    addPacient: require('./add-pacient')
+    addPacient: require('./add-pacient'),
+
+    retrieveSintoms: require('./retrieve-sintoms')
 
 }

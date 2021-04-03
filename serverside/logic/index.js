@@ -1,6 +1,6 @@
 'use strict'
 
-const { User, Pacient, Contact } = require('../data/index')
+const { User, Pacient, Contact, Sintoms } = require('../data/index')
 const bcrypt = require('bcrypt');
 const { AuthError, EmptyError, DuplicateError, MatchingError, NotFoundError } = require('../errors')
 const passwordValidator = require('password-validator');
@@ -181,7 +181,7 @@ const logic = {
                 //create pacient
                 const birthdate = new Date(bdate)
                 const PCRDate = new Date(PcrDate)
-
+                if(!lang) lang = 'cat'
                 const contacts = arrayOfContacts.map(x => x.phone)
                 const pacient = await Pacient.create([{ name, surname, phone, birthdate, PCRDate, sintoms, 'createdBy': userId, contacts }], {session: session})
                 if(!pacient) {
@@ -206,7 +206,31 @@ const logic = {
             
            
         })();
-    }
+    },
+
+
+     /**
+     * Retrieves sintoms by lang
+     * 
+     * @param {String} lang 
+     */
+    getSintoms(lang) {
+        return (async () => {
+            let options = {}
+            if(!lang) lang= 'cat' 
+            if(lang === 'es') {
+                options = {'sintoma_es':1}
+            } else if (lang === 'eng'){
+                options = {'sintoma_eng':1}
+            } else {
+                options = {'sintoma_cat':1}
+            }
+                
+            let sintoms = await Sintoms.find({},options)
+            return sintoms
+            
+        })()
+    },
 }
 
 module.exports = logic

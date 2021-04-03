@@ -21,12 +21,14 @@ const { registerUser,
     authenticateUser, 
     updateUser, 
     retrieveUser,
-    addPacient
+    addPacient,
+    retrieveSintoms
  } = require('./routes')
 
  const getContacts = 'getContacts'
  const getPacients = 'getPacients'
  const createPacient = 'createPacient'
+ const getSintoms = 'getSintoms'
 
 mongoose.connect(DB_URL, { useNewUrlParser: true,  useFindAndModify: false  })
     .then(() => {
@@ -48,7 +50,8 @@ mongoose.connect(DB_URL, { useNewUrlParser: true,  useFindAndModify: false  })
         router.get('/retrieveuser', [tokenVerifierMiddleware], retrieveUser)
         router.get('/pacients', [tokenVerifierMiddleware, logsMiddleware(getContacts), verifyAuth(getContacts)], retrieveUser)
         router.get('/contacts', [tokenVerifierMiddleware, logsMiddleware(getPacients), verifyAuth(getPacients)], retrieveUser)
-        router.post('/pacient', [tokenVerifierMiddleware, logsMiddleware(createPacient), verifyAuth(createPacient)], addPacient)
+        router.get('/sintoms/:lang', jsonBodyParser, retrieveSintoms)
+        router.post('/pacient', [jsonBodyParser, tokenVerifierMiddleware, logsMiddleware(createPacient), verifyAuth(createPacient)], addPacient)
         app.listen(PORT, () => console.log(`running on port ${PORT}`))
     })
     .catch(console.error)

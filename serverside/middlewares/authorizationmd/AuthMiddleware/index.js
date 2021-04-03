@@ -4,7 +4,6 @@ const {AuthError, EmptyError} = require('../../../errors/index')
 module.exports = function verifyAuth(operation) {
     return async (req, res, next) => {
         try{
-
             userId = req.userId
             const user = await User.findById(userId)
             if(!user) res.status(401)
