@@ -22,7 +22,9 @@ const { registerUser,
     updateUser, 
     retrieveUser,
     addPacient,
-    retrieveSintoms
+    retrieveSintoms,
+    getAllPacients,
+    getPacientDetail
  } = require('./routes')
 
  const getContacts = 'getContacts'
@@ -42,16 +44,26 @@ mongoose.connect(DB_URL, { useNewUrlParser: true,  useFindAndModify: false  })
         app.use('/api', router)
         router.use(cors()) //Para el Cors, evita el bloqueo del navegador por seguridad cuando hace llamadas a diferentes URLs.
         //Faltará implementar middlewares de authorization que puede requerir llamar a BD.
+
+        //doc
         router.use('/api-docs', swaggerUi.serve);
         router.get('/api-docs', swaggerUi.setup(swaggerDocument));
+
+        //user
         router.post('/user', jsonBodyParser, registerUser)
         router.post('/user/auth', jsonBodyParser, authenticateUser)
         router.put('/user/update', jsonBodyParser, updateUser)
         router.get('/retrieveuser', [tokenVerifierMiddleware], retrieveUser)
-        router.get('/pacients', [tokenVerifierMiddleware, logsMiddleware(getContacts), verifyAuth(getContacts)], retrieveUser)
-        router.get('/contacts', [tokenVerifierMiddleware, logsMiddleware(getPacients), verifyAuth(getPacients)], retrieveUser)
-        router.get('/sintoms/:lang', [jsonBodyParser, tokenVerifierMiddleware, verifyAuth(getSintoms)], retrieveSintoms)
+
+        //pacients and contacts
         router.post('/pacient', [jsonBodyParser, tokenVerifierMiddleware, logsMiddleware(createPacient), verifyAuth(createPacient)], addPacient)
+        router.get('/pacients', [tokenVerifierMiddleware, logsMiddleware(getPacients), verifyAuth(getPacients)], getAllPacients)
+        router.get('/pacient/:pacientid', [tokenVerifierMiddleware, logsMiddleware(getPacients), verifyAuth(getPacients)], getPacientDetail )
+        //router.get('/contacts/:pacientid', [tokenVerifierMiddleware, logsMiddleware(getContacts), verifyAuth(getContacts)], getContactsByPacientId )
+
+        //sintoms
+        router.get('/sintoms/:lang', [jsonBodyParser, tokenVerifierMiddleware, verifyAuth(getSintoms)], retrieveSintoms)
+
         app.listen(PORT, () => console.log(`running on port ${PORT}`))
     })
     .catch(console.error)

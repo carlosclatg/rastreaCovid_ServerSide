@@ -6,7 +6,7 @@ module.exports = function verifyAuth(operation) {
         try{
             userId = req.userId
             const user = await User.findById(userId)
-            if(!user) res.status(401)
+            if(!user) res.status(408)
             const permissions = await Permissions.findOne({operation})
 
             if(!user.type)  {

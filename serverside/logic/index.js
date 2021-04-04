@@ -232,15 +232,43 @@ const logic = {
             return sintoms
         })()
     },
+
+
+    getAllPacients(){
+        return (async () => {
+            return Pacient.find({}, {_id: 0});
+        })();
+    },
+
+
+    getPacientDetail(id){
+        return (async () => {
+            const pacient = await Pacient.aggregate([
+                {
+                  '$match': {
+                    '_id': new mongoose.mongo.ObjectId(id)
+                  }
+                }, {
+                  '$lookup': {
+                    'from': 'sintoms', 
+                    'localField': 'sintoms', 
+                    'foreignField': '_id', 
+                    'as': 'sintoms'
+                  }
+                }, {
+                  '$lookup': {
+                    'from': 'contacts', 
+                    'localField': 'contacts', 
+                    'foreignField': 'phone', 
+                    'as': 'contacts'
+                  }
+                }
+              ])
+            return pacient;
+        })()
+
+
+    }
 }
 
 module.exports = logic
-
-/**
- * {
-  from: 'sintoms',
-  localField: 'sintoms',
-  foreignField: '_id',
-  as: 'arrayofsintom'
-}
- */

@@ -1,11 +1,12 @@
 const logic = require('../logic')
 
 module.exports = (req, res) => {
-    const { params: { lang }} = req
+    const { params: { pacientid }} = req
+    console.log(pacientid)
     try {
-        logic.getSintoms(lang)
-            .then(sintoms => {
-                res.json(sintoms)
+        logic.getPacientDetail(pacientid)
+            .then(pacient => {
+                res.json(pacient)
             })
             .catch(({ message }) => {
                 res.status(400).json({

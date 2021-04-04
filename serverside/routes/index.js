@@ -10,6 +10,11 @@ module.exports = {
 
     addPacient: require('./add-pacient'),
 
-    retrieveSintoms: require('./retrieve-sintoms')
+    retrieveSintoms: require('./retrieve-sintoms'),
 
+    getAllPacients: require('./get-all-pacients'),
+
+    getPacientDetail: require('./get-pacient-detail'),
+
+    getContactsByPacientId: require('./get-contacts-by-pacientid')
 }
