@@ -62,7 +62,7 @@ mongoose.connect(DB_URL, { useNewUrlParser: true,  useFindAndModify: false  })
         router.get('/pacient/:pacientid', [tokenVerifierMiddleware, logsMiddleware(getPacients), verifyAuth(getPacients)], getPacientDetail)
         router.get('/contacts/:pacientid', [tokenVerifierMiddleware, logsMiddleware(getContacts), verifyAuth(getContacts)], getContactsByPacientId )
 
-        //sintoms
+        //sintoms eng, cat, es
         router.get('/sintoms/:lang', [jsonBodyParser, tokenVerifierMiddleware, verifyAuth(getSintoms)], retrieveSintoms)
 
         app.listen(PORT, () => console.log(`running on port ${PORT}`))

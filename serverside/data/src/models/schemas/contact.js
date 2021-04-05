@@ -13,8 +13,7 @@ const Contact = new Schema({
 
     phone :  {
         type: Number,
-        required: true,
-        unique: true
+        required: true
     }
 
     // pacientId: {

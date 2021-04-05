@@ -29,7 +29,7 @@ const Pacient = new Schema({
     },
 
     contacts: {
-        type: [Number]
+        type: [ObjectId]
     },
 
     sintoms: {

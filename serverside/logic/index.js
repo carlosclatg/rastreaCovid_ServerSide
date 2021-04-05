@@ -175,25 +175,25 @@ const logic = {
                 session.startTransaction()
                 const p = await Pacient.findOne({phone});
                 if(p){
-                    console.log(p)
                     throw new Error('Existing phone')
                 } 
                 //create pacient
                 const birthdate = new Date(bdate)
                 const PCRDate = new Date(PcrDate)
 
-                const contacts = arrayOfContacts.map(x => x.phone)
                 let sintomsObjectId = sintoms.map(x=> new mongoose.mongo.ObjectId(x))
-                const pacient = await Pacient.create([{ name, surname, phone, birthdate, PCRDate, 'sintoms' : sintomsObjectId, 'createdBy': new mongoose.mongo.ObjectId(userId), contacts }], {session: session})
+                let contactsIds = []
+                if(arrayOfContacts && arrayOfContacts.length) {
+                    contactsIds = await Contact.insertMany(arrayOfContacts, {session: session, upsert: true})
+                }
+
+                const pacient = await Pacient.create([{ name, surname, phone, birthdate, PCRDate, 'sintoms' : sintomsObjectId, 'createdBy': new mongoose.mongo.ObjectId(userId), 'contacts': contactsIds }], {session: session})
                 if(!pacient) {
                     await session.abortTransaction()
                     session.endSession()
                     throw new Error('No pacient was saved')
                 }
-                if(arrayOfContacts && arrayOfContacts.length) {
-                    console.log(arrayOfContacts)
-                    const a = await Contact.insertMany(arrayOfContacts, {session: session})
-                }
+                
                 
                 await session.commitTransaction()
                 session.endSession()
@@ -227,7 +227,6 @@ const logic = {
             } else {
                 options = {'sintoma_cat':1}
             }
-                
             let sintoms = await Sintoms.find({},options)
             return sintoms
         })()
@@ -318,7 +317,7 @@ const logic = {
                   '$lookup': {
                     'from': 'contacts', 
                     'localField': 'contacts', 
-                    'foreignField': 'phone', 
+                    'foreignField': '_id', 
                     'as': 'contacts'
                   }
                 },

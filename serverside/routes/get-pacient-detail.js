@@ -1,7 +1,7 @@
 const logic = require('../logic')
 
 module.exports = (req, res) => {
-    const { params: { pacientid }, query: { lang }} = req
+    const { params: { pacientid }, query: { lang } } = req
 
     try {
         logic.getPacientDetail(pacientid, lang)
