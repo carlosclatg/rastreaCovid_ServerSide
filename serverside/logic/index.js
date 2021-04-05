@@ -241,7 +241,27 @@ const logic = {
     },
 
 
-    getPacientDetail(id){
+    getPacientDetail(id, lang='cat'){
+        let projection = {}
+        
+        if(lang === 'es'){
+            projection = {
+                'sintoms.sintoma_cat' : 0,
+                'sintoms.sintoma_eng' : 0,
+            }
+        } else if(lang === 'eng') {
+            projection = {
+                'sintoms.sintoma_cat' : 0,
+                'sintoms.sintoma_es' : 0,
+            }
+        } else {
+            projection = {
+                'sintoms.sintoma_eng' : 0,
+                'sintoms.sintoma_es' : 0,
+            }
+        }
+        
+
         return (async () => {
             const pacient = await Pacient.aggregate([
                 {
@@ -262,12 +282,54 @@ const logic = {
                     'foreignField': 'phone', 
                     'as': 'contacts'
                   }
+                },
+                {
+                    "$project": projection
                 }
               ])
             return pacient;
         })()
+    },
 
 
+    getContactsByPacientId(id){
+
+        const projection = {
+            '_id': 0,
+            'contacts._id' : 1,
+            'contacts.name' : 1,
+            'contacts.surname' : 1,
+            'contacts.phone' : 1,
+        }
+        return (async () => {
+            const contacts = await Pacient.aggregate([
+                {
+                  '$match': {
+                    '_id': new mongoose.mongo.ObjectId(id)
+                  }
+                }, {
+                  '$lookup': {
+                    'from': 'sintoms', 
+                    'localField': 'sintoms', 
+                    'foreignField': '_id', 
+                    'as': 'sintoms'
+                  }
+                }, {
+                  '$lookup': {
+                    'from': 'contacts', 
+                    'localField': 'contacts', 
+                    'foreignField': 'phone', 
+                    'as': 'contacts'
+                  }
+                },
+                {
+                    "$project": projection
+                }
+              ])
+
+              return contacts[0].contacts
+        })()
+        
     }
 }
 

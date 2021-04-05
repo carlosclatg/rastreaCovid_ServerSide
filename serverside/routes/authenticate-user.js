@@ -3,7 +3,7 @@ const logic = require('../logic')
 const { createToken } = require('../token-helper')
 
 module.exports = (req, res) => {
-    console.log(req.body)
+
     const { body: { email, password } } = req
 
     try {

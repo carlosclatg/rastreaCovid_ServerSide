@@ -24,7 +24,8 @@ const { registerUser,
     addPacient,
     retrieveSintoms,
     getAllPacients,
-    getPacientDetail
+    getPacientDetail,
+    getContactsByPacientId
  } = require('./routes')
 
  const getContacts = 'getContacts'
@@ -58,8 +59,8 @@ mongoose.connect(DB_URL, { useNewUrlParser: true,  useFindAndModify: false  })
         //pacients and contacts
         router.post('/pacient', [jsonBodyParser, tokenVerifierMiddleware, logsMiddleware(createPacient), verifyAuth(createPacient)], addPacient)
         router.get('/pacients', [tokenVerifierMiddleware, logsMiddleware(getPacients), verifyAuth(getPacients)], getAllPacients)
-        router.get('/pacient/:pacientid', [tokenVerifierMiddleware, logsMiddleware(getPacients), verifyAuth(getPacients)], getPacientDetail )
-        //router.get('/contacts/:pacientid', [tokenVerifierMiddleware, logsMiddleware(getContacts), verifyAuth(getContacts)], getContactsByPacientId )
+        router.get('/pacient/:pacientid', [tokenVerifierMiddleware, logsMiddleware(getPacients), verifyAuth(getPacients)], getPacientDetail)
+        router.get('/contacts/:pacientid', [tokenVerifierMiddleware, logsMiddleware(getContacts), verifyAuth(getContacts)], getContactsByPacientId )
 
         //sintoms
         router.get('/sintoms/:lang', [jsonBodyParser, tokenVerifierMiddleware, verifyAuth(getSintoms)], retrieveSintoms)
