@@ -9,10 +9,10 @@ module.exports = (req, res) => {
     try {
         logic.authenticateUser(email, password)
             // .then(data => res.json(data))
-            .then(userId => {
-                const token = createToken(userId)
+            .then(user => {
+                const token = createToken(user.id)
 
-                res.json({ token })
+                res.json({ token, 'type': user.type })
             })
             .catch(({ message }) => {
                 res.status(400).json({

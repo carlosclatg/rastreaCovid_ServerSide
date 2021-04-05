@@ -87,7 +87,7 @@ const logic = {
                 const match = await bcrypt.compare(password, user.password)
                 if (!match) throw new AuthError('wrong credentials')
                 
-                return user.id
+                return {'id': user.id, 'type': user.type}
         })()
     },
 
