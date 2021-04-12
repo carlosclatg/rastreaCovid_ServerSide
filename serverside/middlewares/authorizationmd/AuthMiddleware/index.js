@@ -1,6 +1,8 @@
 const { User, Permissions } = require("../../../data")
 const {AuthError, EmptyError} = require('../../../errors/index')
 
+const {ADMIN, RASTREATOR} = require('../../../logic')
+
 module.exports = function verifyAuth(operation) {
     return async (req, res, next) => {
         try{
@@ -14,13 +16,13 @@ module.exports = function verifyAuth(operation) {
                 throw new EmptyError()
             }
 
-            if(user.type === 'admin'){
+            if(user.type === ADMIN){
                 if(!permissions.isAdminAllowed) {
                     throw new AuthError()
                 }
             }
 
-            if(user.type === 'rastreator'){
+            if(user.type === RASTREATOR){
                 if(!permissions.isRastreatorAllowed) {
                     throw new AuthError()
                 } 

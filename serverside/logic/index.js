@@ -235,7 +235,7 @@ const logic = {
 
     getAllPacients(){
         return (async () => {
-            return Pacient.find({}, {_id: 0});
+            return Pacient.find({});
         })();
     },
 
