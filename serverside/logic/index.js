@@ -278,7 +278,7 @@ const logic = {
                   '$lookup': {
                     'from': 'contacts', 
                     'localField': 'contacts', 
-                    'foreignField': 'phone', 
+                    'foreignField': '_id', 
                     'as': 'contacts'
                   }
                 },
@@ -286,7 +286,7 @@ const logic = {
                     "$project": projection
                 }
               ])
-            return pacient;
+            return pacient[0];
         })()
     },
 
