@@ -181,7 +181,9 @@ const logic = {
                 const birthdate = new Date(bdate)
                 const PCRDate = new Date(PcrDate)
 
-                let sintomsObjectId = sintoms.map(x=> new mongoose.mongo.ObjectId(x))
+                let sintomsObjectId = sintoms.map(x=> new mongoose.mongo.ObjectId(x)) 
+                const countOfSintoms = await Sintoms.find({ '_id': { $in: sintomsObjectId } } )
+                if(countOfSintoms !== sintomsObjectId.length) throw new Error('Incorrect id in the sintoms array')
                 let contactsIds = []
                 if(arrayOfContacts && arrayOfContacts.length) {
                     contactsIds = await Contact.insertMany(arrayOfContacts, {session: session, upsert: true})

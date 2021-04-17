@@ -11,19 +11,6 @@ info:
       All timestamp field **are** UTC based !
 
       The DB has the following fields
-      
-      |Field|Data Type|Description
-      |---|---|---|
-      |---|---|---|
-      |_id|String|The code of the domain.
-      |name|String|name
-      |surname|String|surname
-      |email|String|The mail for the user. UNIQUE
-      |type|String|The role of the user. Values accepted are rastreator and admin.
-      |password|String|Hash of the password for the given user.
-      |phone|Number|Phone number of the user. UNIQUE
-      
-
 servers:
   - description: Nodejs
     url: >-
@@ -128,6 +115,50 @@ paths:
                 $ref: '#/components/schemas/RetrieveUser'
         '400':
           description: If auth by token fails
+  '/sintoms/{lang}':
+    get:
+      x-auth-type: Application User
+      summary: Retrieve list of sintoms 
+      description: |
+         Use this resource to retrieve sintoms. It contains the id of the sintom and translate in catalan, spanish and english.
+      operationId: Retrieve sintoms
+      security:
+        - bearerAuth: []
+      tags:
+        - Features
+      responses:
+        '200':
+          description: User attributes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RetrieveSintoms'
+        '400':
+          description: If auth by token fails
+  '/pacient':
+    post:
+      x-auth-type: Application User
+      summary: Create a pacient
+      description: |
+         Use this resource to create a pacient.
+      operationId: toost pacien
+      security:
+        - bearerAuth: []
+      tags:
+        - Features
+      responses:
+        '200':
+          description: User attributes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CreatePacient'
+        '400':
+          description: If auth by token fails
 components:
   schemas:
     UriRef:
@@ -230,6 +261,94 @@ components:
         surname: "IOC surname"
         email: "opc@ioc.com"
         phone: "123456909"
+    RetrieveSintoms:
+      type: array
+      description: Retrieved info from user
+      required:
+        - id
+        - sintoms_cat
+        - sintoms_eng
+        - sintoms_es
+      properties:
+        id:
+          type: string
+        sintoma_cat:
+          type: string
+        sintoma_eng:
+          type: string
+        sintoma_es:
+          type: string
+      example:
+        id: "123456"
+        sintoma_es: "fever"
+        email: "fiebre"
+        sintoma_cat: "febre"
+    CreatePacient:
+      type: object
+      description: Retrieved info from user
+      required:
+        - name
+        - surname
+        - phone
+        - birthdate
+        - PCRDate
+        - contacts
+        - sintoms
+      properties:
+        name:
+          type: string
+        surname:
+          type: string
+        phone:
+          type: integer
+        birthdate:
+          type: integer
+        PCRDate:
+          type: integer
+        contacts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContactsSchema'
+        sintoms:
+          type: array
+          items:
+            $ref: '#/components/schemas/SintomId'        
+      example:
+        name: "John"
+        surname: "Doe"
+        phone: 123456789
+        birthdate: 1234565598650000
+        PCRDate: 1234565598650000
+        contacts: [{"name": "Carlos1", "surname": "Calvo1", "phone": 123456789}, {"name": "Carlos1", "surname": "Calvo1", "phone": 123456777}]
+        sintoms: ["60684b90c609df2b79a8879b", "60684ba4c609df2b79a8879c" ]
+    SintomId:
+      type: object
+      description: id of the sintom
+      required:
+        - id
+      properties:
+        id:
+          type: string      
+      example:
+        id: "123456abcdef123456789"
+    ContactsSchema:
+      type: object
+      description: Contact info
+      required:
+        - name
+        - surname
+        - phone
+      properties:
+        name:
+          type: string
+        surname:
+          type: string
+        phone:
+          type: integer  
+      example:
+        name: "John"
+        surname: "Doe"
+        phone: 345678909
   securitySchemes:
     bearerAuth:            
       type: http
