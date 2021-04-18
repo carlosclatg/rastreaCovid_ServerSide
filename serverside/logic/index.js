@@ -327,10 +327,48 @@ const logic = {
                     "$project": projection
                 }
               ])
-
+              if(!contacts || !contacts[0]) return null
               return contacts[0].contacts
         })()
         
+    },
+
+    deletePacient(pacientid){
+        
+        if(!pacientid) throw new Error('pacientid must not be null')
+        //delete contacts
+        //delete pacient
+        return (async () => {
+            const session = await mongoose.startSession()
+                //check no other pacient with this phone
+            try{
+                session.startTransaction()
+                //check existing pacient
+                const pacient = await Pacient.findOne({'_id': new mongoose.mongo.ObjectId(pacientid)});
+                console.log(pacient)
+                if(!pacient) throw new Error('Not existing pacientId')
+
+                if(pacient.contacts && pacient.contacts.length){
+                    const contactsIds = pacient.contacts.map(x=>new mongoose.mongo.ObjectId(x))
+                    console.log(contactsIds)
+                    const deleteContacts =  await Contact.deleteMany({
+                        '_id': {
+                            $in: contactsIds
+                        }
+                    })
+                }
+                const deletePacient = await Pacient.deleteOne({_id: pacient._id})
+                session.commitTransaction()
+                session.endSession()
+                return 'ok'
+            } catch(err){
+                await session.abortTransaction()
+                session.endSession()
+                return Promise.reject(err)
+            }
+            
+           
+        })();
     }
 }
 

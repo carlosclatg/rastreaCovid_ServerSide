@@ -25,13 +25,15 @@ const { registerUser,
     retrieveSintoms,
     getAllPacients,
     getPacientDetail,
-    getContactsByPacientId
+    getContactsByPacientId,
+    deletePacientById
  } = require('./routes')
 
  const getContacts = 'getContacts'
  const getPacients = 'getPacients'
  const createPacient = 'createPacient'
  const getSintoms = 'getSintoms'
+ const deletePacient = 'deletePacient'
 
 mongoose.connect(DB_URL, { useNewUrlParser: true,  useFindAndModify: false  })
     .then(() => {
@@ -61,6 +63,7 @@ mongoose.connect(DB_URL, { useNewUrlParser: true,  useFindAndModify: false  })
         router.get('/pacients', [tokenVerifierMiddleware, logsMiddleware(getPacients), verifyAuth(getPacients)], getAllPacients)
         router.get('/pacient/:pacientid', [tokenVerifierMiddleware, logsMiddleware(getPacients), verifyAuth(getPacients)], getPacientDetail)
         router.get('/contacts/:pacientid', [tokenVerifierMiddleware, logsMiddleware(getContacts), verifyAuth(getContacts)], getContactsByPacientId )
+        router.delete('/pacient/:pacientid', [tokenVerifierMiddleware, logsMiddleware(deletePacient), verifyAuth(deletePacient)], deletePacientById)
 
         //Sprint4 --> Editar una vez creado el pacient la lista de contactos (añadir y eliminar) y el propio paciente
 

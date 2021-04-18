@@ -16,5 +16,7 @@ module.exports = {
 
     getPacientDetail: require('./get-pacient-detail'),
 
-    getContactsByPacientId: require('./get-contacts-by-pacientid')
+    getContactsByPacientId: require('./get-contacts-by-pacientid'),
+
+    deletePacientById: require('./delete-pacient')
 }
