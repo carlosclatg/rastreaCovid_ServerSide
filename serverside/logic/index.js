@@ -183,7 +183,7 @@ const logic = {
 
                 let sintomsObjectId = sintoms.map(x=> new mongoose.mongo.ObjectId(x)) 
                 const countOfSintoms = await Sintoms.find({ '_id': { $in: sintomsObjectId } } )
-                if(countOfSintoms !== sintomsObjectId.length) throw new Error('Incorrect id in the sintoms array')
+                if(countOfSintoms.length !== sintomsObjectId.length) throw new Error('Incorrect id in the sintoms array')
                 let contactsIds = []
                 if(arrayOfContacts && arrayOfContacts.length) {
                     contactsIds = await Contact.insertMany(arrayOfContacts, {session: session, upsert: true})
@@ -243,6 +243,7 @@ const logic = {
 
 
     getPacientDetail(id, lang='cat'){
+        if(!id) throw new Error('patient id must be defined')
         let projection = {}
         
         if(lang === 'es'){
@@ -294,7 +295,7 @@ const logic = {
 
 
     getContactsByPacientId(id){
-
+        if(!id) throw new Error('pacient id must be defined')
         const projection = {
             '_id': 0,
             'contacts._id' : 1,
@@ -345,12 +346,10 @@ const logic = {
                 session.startTransaction()
                 //check existing pacient
                 const pacient = await Pacient.findOne({'_id': new mongoose.mongo.ObjectId(pacientid)});
-                console.log(pacient)
                 if(!pacient) throw new Error('Not existing pacientId')
 
                 if(pacient.contacts && pacient.contacts.length){
                     const contactsIds = pacient.contacts.map(x=>new mongoose.mongo.ObjectId(x))
-                    console.log(contactsIds)
                     const deleteContacts =  await Contact.deleteMany({
                         '_id': {
                             $in: contactsIds
