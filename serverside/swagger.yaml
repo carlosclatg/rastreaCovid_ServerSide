@@ -299,12 +299,16 @@ components:
       description: Token, expires in 4h.
       required: 
         - _id
+        - type
       properties:
         token:
           type: string
           format: uri
+        type:
+          type: string
       example:
         token: "Your_auth_token"
+        type: "admin"
     RegisterUser:
       type: object
       description: User to be added
@@ -403,8 +407,8 @@ components:
           type: string
       example:
         id: "123456"
-        sintoma_es: "fever"
-        email: "fiebre"
+        sintoma_es: "fiebre"
+        sintoma_eng: "fever"
         sintoma_cat: "febre"
     CreatePacient:
       type: object
