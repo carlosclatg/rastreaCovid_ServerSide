@@ -18,5 +18,11 @@ module.exports = {
 
     getContactsByPacientId: require('./get-contacts-by-pacientid'),
 
-    deletePacientById: require('./delete-pacient')
+    deletePacientById: require('./delete-pacient'),
+
+    updatePacientById: require('./update-pacient')
+
+
+
+
 }

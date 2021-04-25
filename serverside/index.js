@@ -12,7 +12,8 @@ const cors = require('cors')
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 const swaggerDocument = YAML.load('./swagger.yaml');
-
+const https = require('https')
+var fs = require('fs');
 const DB_URL = "mongodb+srv://carlos:250894@cluster0.v8se2.mongodb.net/ioc?retryWrites=true&w=majority"
 const JWT_SECRET = "MYSECRET"
 const PORT = 8080
@@ -26,7 +27,8 @@ const { registerUser,
     getAllPacients,
     getPacientDetail,
     getContactsByPacientId,
-    deletePacientById
+    deletePacientById,
+    updatePacientById
  } = require('./routes')
 
  const getContacts = 'getContacts'
@@ -34,6 +36,7 @@ const { registerUser,
  const createPacient = 'createPacient'
  const getSintoms = 'getSintoms'
  const deletePacient = 'deletePacient'
+ const updatePacient = 'updatePacient'
 
 mongoose.connect(DB_URL, { useNewUrlParser: true,  useFindAndModify: false  })
     .then(() => {
@@ -41,6 +44,16 @@ mongoose.connect(DB_URL, { useNewUrlParser: true,  useFindAndModify: false  })
         const app = express() //Express server
         const jsonBodyParser = bodyParser.json() //Bodyparser for body
         const router = express.Router() //router
+
+        var key = fs.readFileSync(__dirname + '/cert/key.pem');
+        var cert = fs.readFileSync(__dirname + '/cert/cert.pem');
+        var options = {
+          key: key,
+          cert: cert
+        };
+        //openssl genrsa -out key.pem
+        //openssl req -new -key key.pem -out csr.pem
+        //openssl x509 -req -days 365 -in csr.pem -signkey key.pem -out cert.pem
 
         app.use(express.json({limit: '50mb'})); //Set more limit to size because otherwise it refuses size = 1MB
         app.use(express.urlencoded({limit: '50mb'}));
@@ -64,13 +77,13 @@ mongoose.connect(DB_URL, { useNewUrlParser: true,  useFindAndModify: false  })
         router.get('/pacient/:pacientid', [tokenVerifierMiddleware, logsMiddleware(getPacients), verifyAuth(getPacients)], getPacientDetail)
         router.get('/contacts/:pacientid', [tokenVerifierMiddleware, logsMiddleware(getContacts), verifyAuth(getContacts)], getContactsByPacientId )
         router.delete('/pacient/:pacientid', [tokenVerifierMiddleware, logsMiddleware(deletePacient), verifyAuth(deletePacient)], deletePacientById)
+        router.put('/pacient/:pacientid',[jsonBodyParser, tokenVerifierMiddleware, logsMiddleware(createPacient), verifyAuth(createPacient)], updatePacientById)
 
         //Sprint4 --> Editar una vez creado el pacient la lista de contactos (añadir y eliminar) y el propio paciente
-
-
         //sintoms eng, cat, es
         router.get('/sintoms/:lang', [jsonBodyParser, tokenVerifierMiddleware, verifyAuth(getSintoms)], retrieveSintoms)
 
-        app.listen(PORT, () => console.log(`running on port ${PORT}`))
+        var server = https.createServer(options, app);
+        server.listen(PORT, ()=> console.log("https listening on port " + PORT))
     })
     .catch(console.error)

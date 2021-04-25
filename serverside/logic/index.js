@@ -368,6 +368,79 @@ const logic = {
             
            
         })();
+    },
+
+
+    updatePacient(pacientid, name, surname, phone, bdate, PcrDate, arrayOfContacts, sintoms, userId){
+        if (typeof pacientid !== 'string') throw new TypeError('pacientid  is not a string')
+        if (!pacientid.trim().length) throw new EmptyError('pacientid cannot be empty')
+        if (typeof name !== 'string') throw new TypeError('name  is not a string')
+        if (!name.trim().length) throw new EmptyError('name cannot be empty')
+        if (typeof surname !== 'string') throw new TypeError('surname is not a string')
+        if (!surname.trim().length) throw new EmptyError('surname cannot be empty')
+        if (typeof phone !== 'number') throw new TypeError('phone is not a number')
+        if (typeof bdate !== 'number') throw new TypeError('birthdate is not a valid number')
+        if (typeof PcrDate !== 'number') throw new TypeError('birthdate is not a valid number')
+        if (typeof userId !== 'string') throw new TypeError('userId is not a string')
+        if (!userId.trim().length) throw new EmptyError('userId cannot be empty')
+        if (!(arrayOfContacts instanceof Array)) throw new TypeError('contacts is not an array')
+        if (!(sintoms instanceof Array)) throw new TypeError('sintoms is not an array')
+
+        return (async () => {
+            const session = await mongoose.startSession()
+            try{
+                session.startTransaction()
+                //check existing phone
+                const existingPacient = await Pacient.findOne({'_id': pacientid});
+                if(!existingPacient){
+                    throw new Error('Existing phone')
+                } 
+
+                //update pacient
+                const birthdate = new Date(bdate)
+                const PCRDate = new Date(PcrDate)
+
+                let sintomsObjectId = sintoms.map(x=> new mongoose.mongo.ObjectId(x)) 
+                const countOfSintoms = await Sintoms.find({ '_id': { $in: sintomsObjectId } } )
+                if(countOfSintoms.length !== sintomsObjectId.length) throw new Error('Incorrect id in the sintoms array')
+                let contactsIds = []
+                if(arrayOfContacts && arrayOfContacts.length) {
+                    contactsIds = await Contact.insertMany(arrayOfContacts, {session: session, upsert: true})
+                }
+
+                const pacient = await Pacient.findOneAndUpdate({'_id': pacientid} , {name, surname, phone, birthdate, PCRDate, 'sintoms' : sintomsObjectId, 'createdBy': new mongoose.mongo.ObjectId(userId), 'contacts': contactsIds }, {session: session})
+                if(!pacient) {
+                    await session.abortTransaction()
+                    session.endSession()
+                    throw new Error('No pacient was saved')
+                }
+
+                console.log(pacient)
+                
+                //delete previous pacients in case it has
+                if(existingPacient.contacts && existingPacient.contacts.length){
+                    const contactsIds = existingPacient.contacts.map(x=>new mongoose.mongo.ObjectId(x))
+                    const deleteContacts =  await Contact.deleteMany({
+                        '_id': {
+                            $in: contactsIds
+                        }
+                    })
+                }
+                
+                await session.commitTransaction()
+                session.endSession()
+                
+                return {'_id': pacient._id}
+                
+            } catch(err){
+                await session.abortTransaction()
+                session.endSession()
+                return Promise.reject(err)
+            }
+            
+           
+        })();
+
     }
 }
 
