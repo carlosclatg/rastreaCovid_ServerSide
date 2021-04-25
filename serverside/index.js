@@ -13,6 +13,7 @@ const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 const swaggerDocument = YAML.load('./swagger.yaml');
 const https = require('https')
+const http = require('http')
 var fs = require('fs');
 const DB_URL = "mongodb+srv://carlos:250894@cluster0.v8se2.mongodb.net/ioc?retryWrites=true&w=majority"
 const JWT_SECRET = "MYSECRET"
@@ -83,7 +84,9 @@ mongoose.connect(DB_URL, { useNewUrlParser: true,  useFindAndModify: false  })
         //sintoms eng, cat, es
         router.get('/sintoms/:lang', [jsonBodyParser, tokenVerifierMiddleware, verifyAuth(getSintoms)], retrieveSintoms)
 
-        var server = https.createServer(options, app);
-        server.listen(PORT, ()=> console.log("https listening on port " + PORT))
+        var server =  http.createServer(app)
+        server.listen(PORT, ()=> console.log("http listening on port " + PORT))
+        //var server = https.createServer(options, app);
+        //server.listen(PORT, ()=> console.log("https listening on port " + PORT))
     })
     .catch(console.error)
