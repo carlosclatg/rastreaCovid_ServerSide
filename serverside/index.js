@@ -29,7 +29,9 @@ const { registerUser,
     getPacientDetail,
     getContactsByPacientId,
     deletePacientById,
-    updatePacientById
+    updatePacientById,
+    getStats,
+    getFrequencySintoms
  } = require('./routes')
 
  const getContacts = 'getContacts'
@@ -38,6 +40,7 @@ const { registerUser,
  const getSintoms = 'getSintoms'
  const deletePacient = 'deletePacient'
  const updatePacient = 'updatePacient'
+ const stats = 'getstats'
 
 mongoose.connect(DB_URL, { useNewUrlParser: true,  useFindAndModify: false  })
     .then(() => {
@@ -82,7 +85,12 @@ mongoose.connect(DB_URL, { useNewUrlParser: true,  useFindAndModify: false  })
 
         //Sprint4 --> Editar una vez creado el pacient la lista de contactos (añadir y eliminar) y el propio paciente
         //sintoms eng, cat, es
-        router.get('/sintoms/:lang', [jsonBodyParser, tokenVerifierMiddleware, verifyAuth(getSintoms)], retrieveSintoms)
+        router.get('/sintoms/:lang', [jsonBodyParser, tokenVerifierMiddleware,logsMiddleware(stats), verifyAuth(stats)], retrieveSintoms)
+
+
+        router.get('/stats', getStats)
+        router.get('/stats-freq-sin/:lang', getFrequencySintoms)
+
 
         var server =  http.createServer(app)
         server.listen(PORT, ()=> console.log("http listening on port " + PORT))

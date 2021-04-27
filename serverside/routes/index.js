@@ -20,9 +20,10 @@ module.exports = {
 
     deletePacientById: require('./delete-pacient'),
 
-    updatePacientById: require('./update-pacient')
+    updatePacientById: require('./update-pacient'),
 
+    getStats: require('./get-stats'),
 
-
+    getFrequencySintoms: require('./get-freq-sin'),
 
 }

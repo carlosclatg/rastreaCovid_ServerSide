@@ -437,10 +437,94 @@ const logic = {
                 session.endSession()
                 return Promise.reject(err)
             }
-            
-           
         })();
+    },
 
+    getStats(){
+        return (async () => {
+            const result =  await Pacient.aggregate([
+                {
+                    '$project': {
+                        '_id': 0, 
+                        'nsintoms': {
+                        '$cond': {
+                            'if': {
+                            '$isArray': '$sintoms'
+                            }, 
+                            'then': {
+                            '$size': '$sintoms'
+                            }, 
+                            'else': 'NA'
+                        }
+                        }, 
+                        'ncontacts': {
+                        '$cond': {
+                            'if': {
+                            '$isArray': '$contacts'
+                            }, 
+                            'then': {
+                            '$size': '$contacts'
+                            }, 
+                            'else': 'NA'
+                        }
+                        }
+                    }
+                }
+            ])
+
+            return result
+        
+        })()
+    },
+
+
+    getFrequencySintoms(lang='cat'){
+        let langquery = null
+        if(lang === 'es'){
+            langquery = '$sintoms.sintoma_es'
+        } else if(lang === 'eng') {
+            langquery = '$sintoms.sintoma_eng'
+        } else {
+            langquery = '$sintoms.sintoma_cat'
+        }
+        
+
+        return (async () => {
+            const result =  await Pacient.aggregate(
+                [
+                    {
+                      '$lookup': {
+                        'from': 'sintoms', 
+                        'localField': 'sintoms', 
+                        'foreignField': '_id', 
+                        'as': 'sintoms'
+                      }
+                    }, {
+                      '$project': {
+                        '_id': 0, 
+                        'sintoms': 1
+                      }
+                    }, {
+                      '$unwind': {
+                        'path': '$sintoms'
+                      }
+                    }, {
+                      '$project': {
+                        'sintoma': langquery
+                      }
+                    }, {
+                      '$group': {
+                        '_id': '$sintoma', 
+                        'count': {
+                          '$sum': 1
+                        }
+                      }
+                    }
+                ])
+
+            return result
+        
+        })()
     }
 }
 
