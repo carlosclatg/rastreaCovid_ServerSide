@@ -525,6 +525,13 @@ const logic = {
             return result
         
         })()
+    },
+
+
+    retrieveAll(){
+        return (async () => {
+            return User.find({}).select("-password -__v");
+        })();
     }
 }
 

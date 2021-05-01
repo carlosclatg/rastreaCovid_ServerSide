@@ -31,7 +31,8 @@ const { registerUser,
     deletePacientById,
     updatePacientById,
     getStats,
-    getFrequencySintoms
+    getFrequencySintoms,
+    retrieveAllUsers
  } = require('./routes')
 
  const getContacts = 'getContacts'
@@ -40,7 +41,7 @@ const { registerUser,
  const getSintoms = 'getSintoms'
  const deletePacient = 'deletePacient'
  const updatePacient = 'updatePacient'
- const stats = 'getstats'
+ const stats = 'getStats'
 
 mongoose.connect(DB_URL, { useNewUrlParser: true,  useFindAndModify: false  })
     .then(() => {
@@ -74,6 +75,7 @@ mongoose.connect(DB_URL, { useNewUrlParser: true,  useFindAndModify: false  })
         router.post('/user/auth', jsonBodyParser, authenticateUser)
         router.put('/user/update', jsonBodyParser, updateUser)
         router.get('/retrieveuser', [tokenVerifierMiddleware], retrieveUser)
+        router.get('/users', [jsonBodyParser], retrieveAllUsers )
 
         //pacients and contacts
         router.post('/pacient', [jsonBodyParser, tokenVerifierMiddleware, logsMiddleware(createPacient), verifyAuth(createPacient)], addPacient)
@@ -81,15 +83,15 @@ mongoose.connect(DB_URL, { useNewUrlParser: true,  useFindAndModify: false  })
         router.get('/pacient/:pacientid', [tokenVerifierMiddleware, logsMiddleware(getPacients), verifyAuth(getPacients)], getPacientDetail)
         router.get('/contacts/:pacientid', [tokenVerifierMiddleware, logsMiddleware(getContacts), verifyAuth(getContacts)], getContactsByPacientId )
         router.delete('/pacient/:pacientid', [tokenVerifierMiddleware, logsMiddleware(deletePacient), verifyAuth(deletePacient)], deletePacientById)
-        router.put('/pacient/:pacientid',[jsonBodyParser, tokenVerifierMiddleware, logsMiddleware(createPacient), verifyAuth(createPacient)], updatePacientById)
+        router.put('/pacient/:pacientid',[jsonBodyParser, tokenVerifierMiddleware, logsMiddleware(updatePacient), verifyAuth(updatePacient)], updatePacientById)
 
         //Sprint4 --> Editar una vez creado el pacient la lista de contactos (añadir y eliminar) y el propio paciente
         //sintoms eng, cat, es
-        router.get('/sintoms/:lang', [jsonBodyParser, tokenVerifierMiddleware,logsMiddleware(stats), verifyAuth(stats)], retrieveSintoms)
+        router.get('/sintoms/:lang', [jsonBodyParser, tokenVerifierMiddleware,logsMiddleware(getSintoms), verifyAuth(getSintoms)], retrieveSintoms)
 
 
-        router.get('/stats', getStats)
-        router.get('/stats-freq-sin/:lang', getFrequencySintoms)
+        router.get('/stats',[jsonBodyParser, tokenVerifierMiddleware,logsMiddleware(stats), verifyAuth(stats)], getStats)
+        router.get('/stats-freq-sin/:lang',[jsonBodyParser, tokenVerifierMiddleware,logsMiddleware(stats), verifyAuth(stats)], getFrequencySintoms)
 
 
         var server =  http.createServer(app)

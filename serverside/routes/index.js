@@ -26,4 +26,6 @@ module.exports = {
 
     getFrequencySintoms: require('./get-freq-sin'),
 
+    retrieveAllUsers: require('./retrieve-all')
+
 }
