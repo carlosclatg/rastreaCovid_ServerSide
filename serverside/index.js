@@ -75,7 +75,7 @@ mongoose.connect(DB_URL, { useNewUrlParser: true,  useFindAndModify: false  })
         router.post('/user/auth', jsonBodyParser, authenticateUser)
         router.put('/user/update', jsonBodyParser, updateUser)
         router.get('/retrieveuser', [tokenVerifierMiddleware], retrieveUser)
-        router.get('/users', [jsonBodyParser], retrieveAllUsers )
+        router.get('/users', [jsonBodyParser, tokenVerifierMiddleware], retrieveAllUsers )
 
         //pacients and contacts
         router.post('/pacient', [jsonBodyParser, tokenVerifierMiddleware, logsMiddleware(createPacient), verifyAuth(createPacient)], addPacient)
