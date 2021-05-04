@@ -21,9 +21,9 @@ const tokenHelper = {
         const { headers: { authorization } } = req
 
         try {
-
+            if(!authorization) throw new Error('Missing authorization')
             const token = authorization.substring(7) //Bearer |-> taken token from here
-
+            
             const userId = this.verifyToken(token)
             //añadir logs
             req.userId = userId
